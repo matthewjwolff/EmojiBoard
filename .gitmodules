@@ -1,0 +1,3 @@
+[submodule "UIOHookNet"]
+	path = UIOHookNet
+	url = git@github.com:matthewjwolff/UIOHookNet.git
