@@ -64,15 +64,10 @@ namespace EmojiBoard
             popupMenu.ShowAll();
             popupMenu.Popup();
 		}
-
-
-		// TODO: define constants in library binding
-        public static readonly ushort MASK_SHIFT_L = 1 << 0;
-        public static readonly ushort MASK_CTRL_L = 1 << 1;
-
+        
         private void UIOHook_OnKeyType(object sender, KeyTypeEventArgs e)
         {
-            if (e.keychar == ':' && e.mask == (MASK_CTRL_L | MASK_SHIFT_L))
+			if (e.keychar == ':' && e.mask == (UIOHook.MASK_CTRL_L | UIOHook.MASK_SHIFT_L))
             {
 				Gtk.Application.Invoke(delegate
 				{
