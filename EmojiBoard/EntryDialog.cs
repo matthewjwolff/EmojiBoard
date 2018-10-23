@@ -106,6 +106,7 @@ namespace EmojiBoard
 			IList<EmojiData> emojis = JsonConvert.DeserializeObject<IList<EmojiData>>(contents).OrderBy(e=>e.annotation).ToList();
 
 			// if you put the following line between Application.Init and Application.Run, you'll segfault when you call Window.Show()
+			UIOHook.DisableDefaultLogFunc();
 			UIOHook.StartHook();
 			Application.Init();
 			mainDialog = new EntryDialog(emojis);
