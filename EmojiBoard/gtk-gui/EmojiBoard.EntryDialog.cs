@@ -56,6 +56,7 @@ namespace EmojiBoard
 			this.DefaultHeight = 300;
 			this.Show();
 			this.DeleteEvent += new global::Gtk.DeleteEventHandler(this.OnDeleteEvent);
+			this.EmojiView.RowActivated += new global::Gtk.RowActivatedHandler(this.OnRowActivated);
 			this.TextEntry.Activated += new global::System.EventHandler(this.OnTextEntryActivated);
 			this.TextEntry.Changed += new global::System.EventHandler(this.OnTextEntryChanged);
 		}

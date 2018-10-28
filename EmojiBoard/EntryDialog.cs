@@ -47,7 +47,7 @@ namespace EmojiBoard
 			this.searchFilter = new TreeModelFilter(store, null);
 			this.searchFilter.VisibleFunc = new TreeModelFilterVisibleFunc(HandleTreeModelFilterVisibleFunc);
 			this.EmojiView.Model = searchFilter;
-			//this.EmojiView.Selection.Mode = SelectionMode.Single
+			this.EmojiView.Selection.Mode = SelectionMode.Single;
 
 			UIOHook.OnKeyType += UIOHook_OnKeyType;
 		}
@@ -89,7 +89,7 @@ namespace EmojiBoard
 				return true;
 			}
 			EmojiData value = model.GetValue(iter, 0) as EmojiData;
-			return value.annotation.StartsWith(this.TextEntry.Text);
+			return value.annotation.StartsWith(this.TextEntry.Text, StringComparison.CurrentCultureIgnoreCase);
 		}
 
 
@@ -126,33 +126,36 @@ namespace EmojiBoard
 
 		protected void OnTextEntryActivated(object sender, EventArgs e)
 		{
-			TreeModel model;
 			TreeIter iter;
-			this.EmojiView.Selection.GetSelected(out model, out iter);
-			EmojiData selected = model.GetValue(iter, 0) as EmojiData;
-			if(selected!=null) {
-				// the user has selected a row
-				Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", true)).Text = selected.unicode;
-                mainDialog.Hide();
+			// just default to first in the list
+			TreePath start, end;
+			this.EmojiView.GetVisibleRange(out start, out end);
+			this.EmojiView.Model.GetIter(out iter, start);
+			EmojiData first = this.EmojiView.Model.GetValue(iter, 0) as EmojiData;
+			if (first != null)
+			{
+				Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", true)).Text = first.unicode;
+				mainDialog.Hide();
 				this.TextEntry.Text = "";
-			} else {
-				// just default to first in the list
-				TreePath start, end;
-				this.EmojiView.GetVisibleRange(out start, out end);
-				this.EmojiView.Model.GetIter(out iter, start);
-				EmojiData first = this.EmojiView.Model.GetValue(iter, 0) as EmojiData;
-				if(first!=null) {
-					Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", true)).Text = selected.unicode;
-                    mainDialog.Hide();
-                    this.TextEntry.Text = "";
-				}
 			}
-
 		}
 
 		protected void OnTextEntryChanged(object sender, EventArgs e)
 		{
 			this.searchFilter.Refilter();
+		}
+
+		protected void OnRowActivated(object o, RowActivatedArgs args)
+		{
+			TreeIter iter;
+			this.EmojiView.Model.GetIter(out iter, args.Path);
+			EmojiData clicked = this.EmojiView.Model.GetValue(iter, 0) as EmojiData;
+			if(clicked!=null) 
+			{
+				Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", true)).Text = clicked.unicode;
+                mainDialog.Hide();
+                this.TextEntry.Text = "";
+			}
 		}
 	}
 }
