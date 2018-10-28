@@ -13,7 +13,7 @@ This repository uses git submodules. Use ``git clone --recurse-submodules https:
 Building
 -------
 
-Build with MonoDevelop. Surely it's possible to compile from command line. But idk how.
+Build with ``msbuild EmojiBoard.sln``, or from MonoDevelop.
 
 License
 ------
