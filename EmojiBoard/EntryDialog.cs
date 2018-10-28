@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using LibUIOHookNet;
+using Notifications;
 
 namespace EmojiBoard
 {
@@ -105,12 +106,13 @@ namespace EmojiBoard
             string contents = File.ReadAllText("emoji.json");
 			IList<EmojiData> emojis = JsonConvert.DeserializeObject<IList<EmojiData>>(contents).OrderBy(e=>e.annotation).ToList();
 
-			// if you put the following line between Application.Init and Application.Run, you'll segfault when you call Window.Show()
 			UIOHook.DisableDefaultLogFunc();
+			// if you put the following line between Application.Init and Application.Run, you'll segfault when you call Window.Show()
 			UIOHook.StartHook();
 			Application.Init();
 			mainDialog = new EntryDialog(emojis);
 			mainDialog.Hide();
+			new Notification("EmojiBoard", "EmojiBoard is running.").Show();
 			Application.Run();
 			// The application has quit, shut down the hook thread
 			UIOHook.StopHook();
@@ -121,7 +123,8 @@ namespace EmojiBoard
 
 		protected void OnDeleteEvent(object o, DeleteEventArgs args)
 		{
-			Application.Quit();
+			mainDialog.Hide();
+            this.TextEntry.Text = "";
 		}
 
 		protected void OnTextEntryActivated(object sender, EventArgs e)
@@ -135,6 +138,7 @@ namespace EmojiBoard
 			if (first != null)
 			{
 				Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", true)).Text = first.unicode;
+				new Notification("EmojiBoard", first.unicode + " has been put on the clipboard.").Show();
 				mainDialog.Hide();
 				this.TextEntry.Text = "";
 			}
@@ -153,6 +157,7 @@ namespace EmojiBoard
 			if(clicked!=null) 
 			{
 				Clipboard.Get(Gdk.Atom.Intern("CLIPBOARD", true)).Text = clicked.unicode;
+				new Notification("EmojiBoard", clicked.unicode + " has been put on the clipboard.").Show();
                 mainDialog.Hide();
                 this.TextEntry.Text = "";
 			}
